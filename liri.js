@@ -55,12 +55,34 @@ function concertThis(searchTerm){
 
 function spotifyThis(searchTerm){
   spotify.search({ type: 'track', query: searchTerm }, function(err, data) {
+    var artistStr = "";
     if (err) {
       return console.log('Error occurred: ' + err);
     }
-    
-  console.log(data.tracks.items[0]);
-  // console.log(data.artists.items[0]); 
+    else if (data){
+      console.log(data.tracks.items[0]);
+      if(data.tracks.items[0].artists.length>1){
+        for (const i in data.tracks.items[0].artists) {
+          artistStr += data.tracks.items[0].artists[i].name + ", ";
+        }
+        artistStr = artistStr.slice(0,-2);
+        console.log(`Artists: ` + artistStr);
+      }
+      else{
+        artistStr = data.tracks.items[0].artists[i].name;
+        console.log("Artist: " + artistStr);
+      }
+      console.log("Track name: " + data.tracks.items[0].name);
+      console.log("Track link: " + data.tracks.items[0].external_urls.spotify);
+      console.log("Album name: " + data.tracks.items[0].album.name);
+    }
+    else{
+      spotify.search({ type: 'track', query: "The Sign" }, function(err, data) {
+        if (err) {
+          return console.log('Error occurred: ' + err);
+        }
+      });
+    }
   });
 }
 
