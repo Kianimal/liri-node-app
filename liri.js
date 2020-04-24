@@ -7,12 +7,14 @@ var keys = require("./keys.js");
 var spotify = new Spotify(keys.spotify);
 
 var commandArg = process.argv;
+var command = commandArg[2];
+var searchTerm = commandArg[3];
+
 moment().format();
 
 function concertThis(searchTerm){
 
   axios.get("https://rest.bandsintown.com/artists/" + searchTerm + "/events/?app_id=codingbootcamp").then(function(response) {
-    console.log(commandArg);
     data = response.data;
     if(data.error === 'Not Found'){
         console.log("Sorry, no results found for that artist. Please try again.");
@@ -20,9 +22,9 @@ function concertThis(searchTerm){
     }
     else {
       for (const event in data) {
-        console.log(`Venue Name: ${data[event].venue.name}`+"\n"
-        +`Location: ${data[event].venue.location}`+"\n"
-        +`Date and time: ${moment(data[event].datetime).format('dddd, MMMM DD, YYYY \\at h:mma')}` +"\n");
+        console.log(`\nVenue Name: \t${data[event].venue.name}`+"\n"
+        +`Location: \t${data[event].venue.location}`+"\n"
+        +`Date and time: \t${moment(data[event].datetime).format('dddd, MMMM DD, YYYY \\at h:mma')}`);
       }
       // console.log(data);
     }
@@ -53,24 +55,27 @@ function spotifyThis(searchTerm){
     if (err) {
       return console.log('Error occurred: ' + err);
     }
+    //Checking if track exists
     else if (data.tracks.items[0]){
-      console.log(data.items);
-      console.log(data.tracks.items[0]);
+      //For displaying multiple artists
       if(data.tracks.items[0].artists.length>1){
         for (const i in data.tracks.items[0].artists) {
           artistStr += data.tracks.items[0].artists[i].name + ", ";
         }
         artistStr = artistStr.slice(0,-2);
-        console.log(`Artists: ` + artistStr);
+        console.log("\nArtists: \t" + artistStr);
       }
+      //Displaying single artist
       else{
         artistStr = data.tracks.items[0].artists[0].name;
-        console.log("Artist: " + artistStr);
+        console.log("\nArtist: \t" + artistStr);
       }
-      console.log("Track name: " + data.tracks.items[0].name);
-      console.log("Track link: " + data.tracks.items[0].external_urls.spotify);
-      console.log("Album name: " + data.tracks.items[0].album.name);
+      //Displaying the rest of the info
+      console.log("Track name: \t" + data.tracks.items[0].name);
+      console.log("Track link: \t" + data.tracks.items[0].external_urls.spotify);
+      console.log("Album name: \t" + data.tracks.items[0].album.name);
     }
+    //Default case if no track exists for search term
     else {
       spotify.search({ type: 'track', query: "The Sign" }, function(err, data) {
         if (err) {
@@ -78,10 +83,10 @@ function spotifyThis(searchTerm){
         }
         else{
           artistStr = data.tracks.items[0].artists[0].name;
-          console.log("Artist: " + artistStr);
-          console.log("Track name: " + data.tracks.items[0].name);
-          console.log("Track link: " + data.tracks.items[0].external_urls.spotify);
-          console.log("Album name: " + data.tracks.items[0].album.name);
+          console.log("\nArtist: \t" + artistStr);
+          console.log("Track name: \t" + data.tracks.items[0].name);
+          console.log("Track link: \t" + data.tracks.items[0].external_urls.spotify);
+          console.log("Album name: \t" + data.tracks.items[0].album.name);
         }
       });
     }
@@ -89,15 +94,23 @@ function spotifyThis(searchTerm){
 }
 
 function movieThis(searchTerm){
-  axios.get("http://www.omdbapi.com/?apikey=4a96b10d&s=" + searchTerm).then(function(response) {
-    console.log(commandArg);
+  axios.get("http://www.omdbapi.com/?apikey=4a96b10d&t=" + searchTerm).then(function(response) {
     data = response.data;
     if(data.error === 'Not Found'){
         console.log("Sorry, no results found for that title. Please try again.");
         console.log()
     }
+    else if (data.Title){
+      console.log("\nTitle: \t\t" + data.Title + "\nYear: \t\t" + data.Year
+      + "\nIMDB Rating: \t" + data.Ratings[0].Value + "\nRT Rating: \t" 
+      + data.Ratings[1].Value + "\nCountry: \t" + data.Country 
+      + "\nLanguage(s): \t" + data.Language + "\nPlot: \t\t" + data.Plot
+      + "\nActors: \t" + data.Actors);
+    }
     else{
-      console.log(data);
+      console.log("\nCouldn't find that movie, sorry. Here's Mr. Nobody, though.");
+      searchTerm="Mr.+Nobody";
+      movieThis(searchTerm);
     }
   }).catch(function(error) {
     if (error.response) {
@@ -121,8 +134,6 @@ function movieThis(searchTerm){
 }
 
 function run(command,searchTerm){
-  console.log(command);
-  console.log(searchTerm);
   switch(command){
     case "concert-this":
       concertThis(searchTerm);
@@ -136,4 +147,4 @@ function run(command,searchTerm){
   }
 }
 
-run(commandArg[2],commandArg[3]);
+run(command,searchTerm);
