@@ -4,13 +4,7 @@ var moment = require("moment");
 var dotenv = require("dotenv").config();
 var keys = require("./keys.js");
 
-var searchTerm = "Spice+Girls";
-
-var alternativeBandsId = "110335a8e0788a1b9ccd54146d28af04";
-
 var spotify = new Spotify(keys.spotify);
-
-var command = "";
 
 var commandArg = process.argv;
 moment().format();
@@ -59,7 +53,7 @@ function spotifyThis(searchTerm){
     if (err) {
       return console.log('Error occurred: ' + err);
     }
-    else if (data.items!=null){
+    else if (data.tracks.items[0]){
       console.log(data.items);
       console.log(data.tracks.items[0]);
       if(data.tracks.items[0].artists.length>1){
@@ -77,7 +71,7 @@ function spotifyThis(searchTerm){
       console.log("Track link: " + data.tracks.items[0].external_urls.spotify);
       console.log("Album name: " + data.tracks.items[0].album.name);
     }
-    else{
+    else {
       spotify.search({ type: 'track', query: "The Sign" }, function(err, data) {
         if (err) {
           return console.log('Error occurred: ' + err);
