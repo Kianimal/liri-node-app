@@ -59,7 +59,8 @@ function spotifyThis(searchTerm){
     if (err) {
       return console.log('Error occurred: ' + err);
     }
-    else if (data){
+    else if (data.items!=null){
+      console.log(data.items);
       console.log(data.tracks.items[0]);
       if(data.tracks.items[0].artists.length>1){
         for (const i in data.tracks.items[0].artists) {
@@ -69,7 +70,7 @@ function spotifyThis(searchTerm){
         console.log(`Artists: ` + artistStr);
       }
       else{
-        artistStr = data.tracks.items[0].artists[i].name;
+        artistStr = data.tracks.items[0].artists[0].name;
         console.log("Artist: " + artistStr);
       }
       console.log("Track name: " + data.tracks.items[0].name);
@@ -80,6 +81,13 @@ function spotifyThis(searchTerm){
       spotify.search({ type: 'track', query: "The Sign" }, function(err, data) {
         if (err) {
           return console.log('Error occurred: ' + err);
+        }
+        else{
+          artistStr = data.tracks.items[0].artists[0].name;
+          console.log("Artist: " + artistStr);
+          console.log("Track name: " + data.tracks.items[0].name);
+          console.log("Track link: " + data.tracks.items[0].external_urls.spotify);
+          console.log("Album name: " + data.tracks.items[0].album.name);
         }
       });
     }
