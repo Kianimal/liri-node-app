@@ -7,10 +7,6 @@ var fs = require("fs");
 
 var spotify = new Spotify(keys.spotify);
 
-var commandArg = process.argv;
-var command = commandArg[2];
-var searchTerm = commandArg[3];
-
 moment().format();
 
 function concertThis(searchTerm){
@@ -146,6 +142,10 @@ function randomThis(){
 }
 
 function run(command,searchTerm){
+  if(searchTerm){
+    searchTerm = searchTerm.split(" ").join("+");
+  }
+  console.log(searchTerm);
   switch(command){
     case "concert-this":
       concertThis(searchTerm);
@@ -160,5 +160,9 @@ function run(command,searchTerm){
       randomThis();
   }
 }
+
+var commandArg = process.argv;
+var command = commandArg[2];
+var searchTerm = commandArg[3];
 
 run(command,searchTerm);
