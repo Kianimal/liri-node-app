@@ -3,6 +3,7 @@ var Spotify = require("node-spotify-api");
 var moment = require("moment");
 var dotenv = require("dotenv").config();
 var keys = require("./keys.js");
+var fs = require("fs");
 
 var spotify = new Spotify(keys.spotify);
 
@@ -133,6 +134,17 @@ function movieThis(searchTerm){
   });
 }
 
+function randomThis(){
+  fs.readFile("random.txt", "utf8", function(error, data) {
+    if (error) {
+      return console.log(error);
+    }
+    data = data.split(",");
+    // We will then re-display the content as an array for later use.
+    run(data[0],data[1]);
+  });
+}
+
 function run(command,searchTerm){
   switch(command){
     case "concert-this":
@@ -144,6 +156,8 @@ function run(command,searchTerm){
     case "movie-this":
       movieThis(searchTerm);
       break;
+    case "do-what-it-says":
+      randomThis();
   }
 }
 
